@@ -1,0 +1,33 @@
+{
+  "title": "Crisp → CSV Export",
+  "description": "Export People, Conversations, Messages, Pages, Events & Files to CSV.",
+  "type": "object",
+  "properties": {
+    "website_id": {
+      "type": "string",
+      "title": "Website ID",
+      "description": "Default Website ID for exports (can be overridden in the UI)."
+    },
+    "perPage": {
+      "type": "integer",
+      "title": "Per Page (20–50)",
+      "default": 50,
+      "minimum": 20,
+      "maximum": 50
+    },
+    "datasets": {
+      "type": "object",
+      "title": "Datasets",
+      "properties": {
+        "people": { "type": "boolean", "default": true },
+        "conversations": { "type": "boolean", "default": true },
+        "messages": { "type": "boolean", "default": true },
+        "pages": { "type": "boolean", "default": false },
+        "events": { "type": "boolean", "default": false },
+        "files": { "type": "boolean", "default": false }
+      }
+    },
+    "dateStart": { "type": ["string","null"], "title": "Date Start (YYYY-MM-DD)" },
+    "dateEnd":   { "type": ["string","null"], "title": "Date End (YYYY-MM-DD)" }
+  }
+}
