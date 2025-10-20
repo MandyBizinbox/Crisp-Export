@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crisp → CSV Export</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; padding: 20px; }
+    fieldset { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    label { display: block; margin: 6px 0; }
+    input[type="text"], input[type="number"] { width: 240px; padding: 6px; }
+    button { padding: 10px 14px; border-radius: 8px; border: 1px solid #333; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Crisp → CSV Export</h1>
+  <p>Select what to export and click <strong>Export</strong> to download a ZIP.</p>
+
+  <form id="f">
+    <fieldset>
+      <legend>Website</legend>
+      <label>
+        Website ID
+        <input type="text" name="website_id" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required />
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Datasets</legend>
+      <label><input type="checkbox" name="people" checked> People</label>
+      <label><input type="checkbox" name="conversations" checked> Conversations</label>
+      <label><input type="checkbox" name="messages" checked> Messages</label>
+      <label><input type="checkbox" name="pages"> Pages</label>
+      <label><input type="checkbox" name="events"> Events</label>
+      <label><input type="checkbox" name="files"> Files</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Filters</legend>
+      <label>Per Page (20–50): <input type="number" name="perPage" min="20" max="50" value="50"></label>
+      <label>Date Start (YYYY-MM-DD): <input type="text" name="dateStart" placeholder="2025-01-01"></label>
+      <label>Date End (YYYY-MM-DD): <input type="text" name="dateEnd" placeholder="2025-10-20"></label>
+    </fieldset>
+
+    <button type="submit">Export</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('f');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = {
+        website_id: fd.get('website_id'),
+        filters: {
+          people: !!fd.get('people'),
+          conversations: !!fd.get('conversations'),
+          messages: !!fd.get('messages'),
+          pages: !!fd.get('pages'),
+          events: !!fd.get('events'),
+          files: !!fd.get('files'),
+          perPage: Number(fd.get('perPage') || 50),
+          dateStart: fd.get('dateStart') || null,
+          dateEnd: fd.get('dateEnd') || null
+        }
+      };
+      const resp = await fetch('/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        return alert('Export failed: ' + (err.error || resp.status));
+      }
+      // Stream download
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'crisp-export.zip'; a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
