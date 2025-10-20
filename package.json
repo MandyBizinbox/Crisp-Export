@@ -1,0 +1,20 @@
+{
+  "name": "crisp-plugin-csv-export",
+  "version": "1.0.0",
+  "description": "Crisp plugin to export People, Conversations, Messages, Pages, Events, Files to CSV (ZIP).",
+  "author": "ForgeWorks",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "NODE_ENV=development node src/server.js"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "crisp-api": "^6.0.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
